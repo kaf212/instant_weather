@@ -107,12 +107,30 @@ class _MyHomePageState extends State<MyHomePage> {
               '$currentPlace',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-                SizedBox(height: 20),
+            SizedBox(height: 20,),
+            buildCurrentWeather(),
+            SizedBox(height: 20),
             buildWeatherForecast(),
           ],
         ),
       ),
     );
+  }
+
+  Widget buildCurrentWeather() {
+    if (forecast == null) {
+      return Row(children: [
+        Text("Loading weather data...")
+      ],);
+    }
+    
+    final currentWeatherData = forecast?["now"]["data"]["instant"]["details"];
+
+    return Row(
+      children: [
+        Text("${currentWeatherData['air_temperature']}")
+      ],
+      );
   }
 
   Widget buildWeatherForecast() {
@@ -196,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
       SizedBox(width: 5),
       Text("|", style: TextStyle(fontSize: 20),),
       SizedBox(width: 5),
-      
+
       Text("${forecastData["air_pressure_at_sea_level"].toString()} hPa",  style: TextStyle(fontSize: 20),),
       Spacer(),
       buildWeatherIcon(symbolCode),

@@ -25,10 +25,6 @@ class Weather {
   }
 
   Map<String, dynamic> processWeatherData(Map<String, dynamic> weatherJson) {
-    if (weatherJson == null) {
-      print("Tried processing null weather JSON");
-    }
-
     final timeSeries = weatherJson["properties"]["timeseries"];
     final now = DateTime.now();
     final timeIn1h = now.add(Duration(hours: 1));
@@ -36,6 +32,7 @@ class Weather {
     final timeIn12h = now.add(Duration(hours: 12));
 
 
+    var closestForecastTimestampNow = {"difference": Duration(days: 1000), "closestIndex": 0};
     var closestForecastTimestamp1h = {"difference": Duration(days: 1000), "closestIndex": 0};
     var closestForecastTimestamp6h = {"difference": Duration(days: 1000), "closestIndex": 0};
     var closestForecastTimestamp12h = {"difference": Duration(days: 1000), "closestIndex": 0};
@@ -50,12 +47,17 @@ class Weather {
       final forecastTimeUTC = DateTime.parse(forecastObject["time"]);
       final forecastTimeLocal = forecastTimeUTC.toLocal();
 
-      //print("$i: $forecastTimeLocal");
+      print("$i: $forecastTimeLocal");
       
+      final differenceNow = forecastTimeLocal.difference(now);
       final difference1h = forecastTimeLocal.difference(timeIn1h);
       final difference6h = forecastTimeLocal.difference(timeIn6h);
       final difference12h = forecastTimeLocal.difference(timeIn12h);
 
+      if (differenceNow.abs().compareTo((closestForecastTimestampNow["difference"] as Duration).abs()) < 0) {        
+        closestForecastTimestampNow["difference"] = differenceNow;
+        closestForecastTimestampNow["closestIndex"] = i;
+      }
       if (difference1h.abs().compareTo((closestForecastTimestamp1h["difference"] as Duration).abs()) < 0) {        
         closestForecastTimestamp1h["difference"] = difference1h;
         closestForecastTimestamp1h["closestIndex"] = i;
@@ -73,10 +75,12 @@ class Weather {
 
     });
     
+    print(closestForecastTimestampNow);
     //print(closestForecastTimestamp1h);
     //print(closestForecastTimestamp6h);
     //print(closestForecastTimestamp12h);
 
+    final closestForecastNow = timeSeries[closestForecastTimestampNow["closestIndex"]];
     final closestForecast1h = timeSeries[closestForecastTimestamp1h["closestIndex"]];
     final closestForecast6h = timeSeries[closestForecastTimestamp6h["closestIndex"]];
     final closestForecast12h = timeSeries[closestForecastTimestamp12h["closestIndex"]];
@@ -86,6 +90,7 @@ class Weather {
     //print(closestForecast12h);
 
     return {
+      "now": closestForecastNow,
       "1h": closestForecast1h,
       "6h": closestForecast6h,
       "12h": closestForecast12h

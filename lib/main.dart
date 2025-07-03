@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:instant_weather/geolocator.dart';
@@ -35,6 +37,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final locator = Locator();
   final weather = Weather();
+  StreamSubscription<Position>? positionSubscription;
   Position? currentCoordinates;
   String? currentPlace;
   Map<String, dynamic>? forecast;
@@ -47,37 +50,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initialize() async {
   await getLocationStream();
-  await getForecast();
 }
 
-  Future<Position> getLocationStream() async {
+  Future<void> getLocationStream() async {
   final stream = await locator.getPositionStream();
-  final firstPosition = await stream.first;
-
+ positionSubscription = stream.listen((Position newPosition) {
   setState(() {
-    currentCoordinates = firstPosition;
+    currentCoordinates = newPosition;
   });
+  getNameOfPlaceByCoordinates(newPosition);
+  getForecast(newPosition);
+});
+  }
 
-  getNameOfPlaceByCoordinates(currentCoordinates);
+  @override
+  void dispose() {
+    positionSubscription?.cancel();
+    super.dispose();
+  }
 
-  return firstPosition;
+  Future<Map<String, dynamic>> getForecast(Position position) async {
+  final weatherForecast = await weather.fetchWeatherData(position.latitude, position.longitude);
+  final symbolCodes = weather.processWeatherData(weatherForecast);
+  setState(() {
+    forecast = symbolCodes;
+  });
+  return weatherForecast;
 }
-
-  Future<Map<String, dynamic>> getForecast() async {
-    final weatherForecast = await weather.fetchWeatherData(currentCoordinates?.latitude, currentCoordinates?.longitude);
-    //print("WeatherForecast in getForecast() =");
-    //print(weatherForecast);
-    final symbolCodes = weather.processWeatherData(weatherForecast);
-    setState(() {
-      forecast = symbolCodes;
-    });
-
-    return weatherForecast;
-  }
-
-  void writeForecastToUI(symbolCodes) {
-    
-  }
 
   void getNameOfPlaceByCoordinates(coordinates) {
     locator.getPlaceMark(currentCoordinates?.latitude, currentCoordinates?.longitude).then((placemarks) {

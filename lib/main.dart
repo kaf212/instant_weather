@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
   void getNameOfPlaceByCoordinates(coordinates) {
-    locator.getPlaceMark(currentCoordinates?.latitude, currentCoordinates?.longitude).then((placemarks) {
+    locator.getPlaceMark(coordinates.latitude, coordinates.longitude).then((placemarks) {
       setState(() {
         final locality = placemarks.first.locality;
         final name = placemarks.first.name;
@@ -127,7 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(children: [
             Text("Nächste Stunde"), 
             Row(children: [
-              Text("$next1h")
+              Text("$next1h"),
+              buildWeatherIcon(next1h)
             ],)
           ],)
         ],),
@@ -135,7 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(children: [
             Text("Nächste 6 Stunden"), 
             Row(children: [
-              Text("$next6h")
+              Text("$next6h"),
+              buildWeatherIcon(next6h)
             ],)
           ],)
         ],),
@@ -143,12 +145,24 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(children: [
             Text("Nächste 12 Stunden"), 
             Row(children: [
-              Text("$next12h")
+              Text("$next12h"),
+              buildWeatherIcon(next12h)
             ],)
           ],)
         ],)
       ],
     );
   }
+
+  Widget buildWeatherIcon(String? code) {
+  if (code == null || code.isEmpty) return SizedBox.shrink();
+  final path = 'assets/weather_icons/$code.png';
+  return Image.asset(
+    path,
+    errorBuilder: (context, error, stackTrace) {
+      return SizedBox.shrink();
+    },
+  );
+}
 }
 

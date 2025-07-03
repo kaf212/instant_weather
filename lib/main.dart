@@ -120,29 +120,55 @@ class _MyHomePageState extends State<MyHomePage> {
     final next6hForecast = forecast?["6h"];
     final next12hForecast = forecast?["12h"];
 
-    return Wrap(
+    return Column(
       children: [
-        Row(children: [
-          Column(children: [
-            Text("Nächste Stunde"), 
-            buildForecastItem(next1hForecast)
-
-          ],)
-        ],),
-        Row(children: [
-          Column(children: [
-            Text("Nächste 6 Stunden"), 
-            buildForecastItem(next6hForecast)
-          ],)
-        ],),
-        Row(children: [
-          Column(children: [
-            Text("Nächste 12 Stunden"), 
-            buildForecastItem(next12hForecast)
-          ],)
-        ],)
-      ],
-    );
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Necessary
+            children: [
+            Container(
+              color: Colors.grey,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: Column(
+                children: [
+                Text("Nächste Stunde"), 
+                buildForecastItem(next1hForecast)
+                        
+              ],),
+            )
+          ],),
+        ),
+        SizedBox(height: 15),
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Necessary
+            children: [
+            Container(
+              color: Colors.grey,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: Column(children: [
+                Text("Nächste 6 Stunden"), 
+                buildForecastItem(next6hForecast)
+              ],),
+            )
+          ],),
+        ),
+        SizedBox(height: 15),
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Necessary
+            children: [
+            Container(
+              color: Colors.grey,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: Column(children: [
+                Text("Nächste 12 Stunden"), 
+                buildForecastItem(next12hForecast)
+              ],),
+            )
+          ],),
+        )
+        ],);
   }
 
   Widget buildForecastItem(Map<String, dynamic> ?forecast) {
@@ -155,13 +181,26 @@ class _MyHomePageState extends State<MyHomePage> {
     final forecastData = forecast["data"]["instant"]["details"];
     final symbolCode = forecast["data"]["next_1_hours"]["summary"]["symbol_code"];
 
-    return Row(children: [
-      Text("${forecastData["air_temperature"].toString()}°C"),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
       SizedBox(width: 10),
-      Text("${forecastData["relative_humidity"].toString()} %"),
-      SizedBox(width: 10),
-      Text("${forecastData["air_pressure_at_sea_level"].toString()} hPa"),
-      buildWeatherIcon(symbolCode)
+      Text("${forecastData["air_temperature"].toString()}°C", style: TextStyle(fontSize: 20),),
+
+      SizedBox(width: 5),
+      Text("|", style: TextStyle(fontSize: 20),),
+      SizedBox(width: 5),
+
+      Text("${forecastData["relative_humidity"].toString()} %", style: TextStyle(fontSize: 20),),
+
+      SizedBox(width: 5),
+      Text("|", style: TextStyle(fontSize: 20),),
+      SizedBox(width: 5),
+      
+      Text("${forecastData["air_pressure_at_sea_level"].toString()} hPa",  style: TextStyle(fontSize: 20),),
+      Spacer(),
+      buildWeatherIcon(symbolCode),
+      SizedBox(width: 10)
     ],);
   }
 

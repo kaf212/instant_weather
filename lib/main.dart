@@ -116,9 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildWeatherForecast() {
-    final next1hForecast = forecast?["next_1_hours"];
-    final next6hForecast = forecast?["next_6_hours"];
-    final next12hForecast = forecast?["next_12_hours"];
+    final next1hForecast = forecast?["1h"];
+    final next6hForecast = forecast?["6h"];
+    final next12hForecast = forecast?["12h"];
 
     return Wrap(
       children: [
@@ -152,13 +152,16 @@ class _MyHomePageState extends State<MyHomePage> {
       ],);
     }
 
+    final forecastData = forecast["data"]["instant"]["details"];
+    final symbolCode = forecast["data"]["next_1_hours"]["summary"]["symbol_code"];
+
     return Row(children: [
-      Text(forecast["temp_min"] != null ? "${forecast["temp_min"]}°C" : "N/A"),
+      Text("${forecastData["air_temperature"].toString()}°C"),
       SizedBox(width: 10),
-      Text(forecast["temp_max"] != null ? "${forecast["temp_max"]}°C" : "N/A"),
+      Text("${forecastData["relative_humidity"].toString()} %"),
       SizedBox(width: 10),
-      Text(forecast["precipitation"] != null ? "${forecast["precipitation"]} mm" : "N/A"),
-      buildWeatherIcon(forecast["symbolCode"])
+      Text("${forecastData["air_pressure_at_sea_level"].toString()} hPa"),
+      buildWeatherIcon(symbolCode)
     ],);
   }
 

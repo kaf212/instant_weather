@@ -159,6 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final path = 'assets/weather_icons/$code.png';
   return Image.asset(
     path,
+    width: 80,
+    height: 80,
     errorBuilder: (context, error, stackTrace) {
       return SizedBox.shrink();
     },

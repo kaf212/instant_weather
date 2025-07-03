@@ -118,9 +118,36 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildWeatherForecast() {
     final symbolCodes = forecast;
+    final next1h = symbolCodes?["next_1_hours"];
+    final next6h = symbolCodes?["next_6_hours"];
+    final next12h = symbolCodes?["next_12_hours"];
+
     return Wrap(
       children: [
-        Text("$symbolCodes")
+        Row(children: [
+          Column(children: [
+            Text("Nächste Stunde"), 
+            Row(children: [
+              Text("$next1h")
+            ],)
+          ],)
+        ],),
+        Row(children: [
+          Column(children: [
+            Text("Nächste 6 Stunden"), 
+            Row(children: [
+              Text("$next6h")
+            ],)
+          ],)
+        ],),
+        Row(children: [
+          Column(children: [
+            Text("Nächste 12 Stunden"), 
+            Row(children: [
+              Text("$next12h")
+            ],)
+          ],)
+        ],)
       ],
     );
   }

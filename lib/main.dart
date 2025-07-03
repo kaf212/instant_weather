@@ -153,11 +153,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return Row(children: [
-      Text(forecast["temp_min"] != null ? "${forecast["temp_min"]}" : "Keine Daten"),
+      Text(forecast["temp_min"] != null ? "${forecast["temp_min"]}°C" : "N/A"),
       SizedBox(width: 10),
-      Text(forecast["temp_min"] != null ? "${forecast["temp_max"]}" : "Keine Daten"),
+      Text(forecast["temp_max"] != null ? "${forecast["temp_max"]}°C" : "N/A"),
       SizedBox(width: 10),
-      Text(forecast["temp_min"] != null ? "${forecast["precipitation"]}" : "Keine Daten"),
+      Text(forecast["precipitation"] != null ? "${forecast["precipitation"]} mm" : "N/A"),
       buildWeatherIcon(forecast["symbolCode"])
     ],);
   }

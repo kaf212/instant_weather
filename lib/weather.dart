@@ -24,40 +24,72 @@ class Weather {
     return jsonDecode(response.body);
   }
 
-  Map<String, dynamic> processWeatherData(weatherJson) {
+  Map<String, dynamic> processWeatherData(Map<String, dynamic> weatherJson) {
     if (weatherJson == null) {
       print("Tried processing null weather JSON");
     }
 
-    final next1hSymbolCode = weatherJson['properties']['timeseries'][0]['data']['next_1_hours']['summary']['symbol_code'];
-    final next6hSymbolCode = weatherJson['properties']['timeseries'][0]['data']['next_6_hours']['summary']['symbol_code'];
-    final next12hSymbolCode = weatherJson['properties']['timeseries'][0]['data']['next_12_hours']['summary']['symbol_code'];
+    final timeSeries = weatherJson["properties"]["timeseries"];
+    final now = DateTime.now();
+    final timeIn1h = now.add(Duration(hours: 1));
+    final timeIn6h = now.add(Duration(hours: 6));
+    final timeIn12h = now.add(Duration(hours: 12));
 
-    final next1hDetails = weatherJson['properties']['timeseries'][0]['data']['next_1_hours']['details'];
-    final next6hDetails = weatherJson['properties']['timeseries'][0]['data']['next_6_hours']['details'];
-    final next12hDetails = weatherJson['properties']['timeseries'][0]['data']['next_12_hours']['details'];
+
+    var closestForecastTimestamp1h = {"difference": Duration(days: 1000), "closestIndex": 0};
+    var closestForecastTimestamp6h = {"difference": Duration(days: 1000), "closestIndex": 0};
+    var closestForecastTimestamp12h = {"difference": Duration(days: 1000), "closestIndex": 0};
+
+    //print("time in 1 hour = $timeIn1h");
+    //print("time in 6 hour = $timeIn6h");
+    //print("time in 12 hour = $timeIn12h");
+
+    var i = 0;
+
+    timeSeries.forEach((forecastObject) {
+      final forecastTimeUTC = DateTime.parse(forecastObject["time"]);
+      final forecastTimeLocal = forecastTimeUTC.toLocal();
+
+      //print("$i: $forecastTimeLocal");
+      
+      final difference1h = forecastTimeLocal.difference(timeIn1h);
+      final difference6h = forecastTimeLocal.difference(timeIn6h);
+      final difference12h = forecastTimeLocal.difference(timeIn12h);
+
+      if (difference1h.abs().compareTo((closestForecastTimestamp1h["difference"] as Duration).abs()) < 0) {        
+        closestForecastTimestamp1h["difference"] = difference1h;
+        closestForecastTimestamp1h["closestIndex"] = i;
+      }
+      if (difference6h.abs().compareTo((closestForecastTimestamp6h["difference"] as Duration).abs()) < 0) {        
+        closestForecastTimestamp6h["difference"] = difference6h;
+        closestForecastTimestamp6h["closestIndex"] = i;
+      }
+      if (difference12h.abs().compareTo((closestForecastTimestamp12h["difference"] as Duration).abs()) < 0) {        
+        closestForecastTimestamp12h["difference"] = difference12h;
+        closestForecastTimestamp12h["closestIndex"] = i;
+      }
+
+      i++;
+
+    });
     
-    final symbolCodes = {
-      "next_1_hours": {
-        "symbolCode": next1hSymbolCode, 
-        "temp_min": next1hDetails["air_temperature_min"],
-        "temp_max": next1hDetails["air_temperature_max"],
-        "precipitation": next1hDetails["precipitation_amount"]
-        },
-      "next_6_hours": {
-        "symbolCode": next6hSymbolCode, 
-        "temp_min": next6hDetails["air_temperature_min"],
-        "temp_max": next6hDetails["air_temperature_max"],
-        "precipitation": next6hDetails["precipitation_amount"]
-        },
-      "next_12_hours": {
-        "symbolCode": next12hSymbolCode, 
-        "temp_min": next12hDetails["air_temperature_min"],
-        "temp_max": next12hDetails["air_temperature_max"],
-        "precipitation": next12hDetails["precipitation_amount"]
-        },
-    };
+    //print(closestForecastTimestamp1h);
+    //print(closestForecastTimestamp6h);
+    //print(closestForecastTimestamp12h);
 
-    return symbolCodes;
+    final closestForecast1h = timeSeries[closestForecastTimestamp1h["closestIndex"]];
+    final closestForecast6h = timeSeries[closestForecastTimestamp6h["closestIndex"]];
+    final closestForecast12h = timeSeries[closestForecastTimestamp12h["closestIndex"]];
+
+    //print(closestForecast1h);
+    //print(closestForecast6h);
+    //print(closestForecast12h);
+
+    return {
+      "1h": closestForecast1h,
+      "6h": closestForecast6h,
+      "12h": closestForecast12h
+      };
+
   }
 }

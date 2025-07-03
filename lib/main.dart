@@ -37,35 +37,40 @@ class _MyHomePageState extends State<MyHomePage> {
   final weather = Weather();
   Position? currentCoordinates;
   String? currentPlace;
-  String? currentWeather;
+  Map<String, dynamic>? currentWeather;
 
   @override
   void initState() {
     super.initState();
-    getLocationStream();
+      initialize();
   }
 
-  void getLocationStream() {
-    locator.getPositionStream().then((stream) {
-    stream.listen((Position fetchedPosition) {
-      setState(() {
-        print(fetchedPosition);
-        currentCoordinates = fetchedPosition;
-        getNameOfPlaceByCoordinates(currentCoordinates);
-        getForecast();
-      });
-    });
-  }).catchError((e) {
-    print('Error: $e');
+  void initialize() async {
+  final position = await getLocationStream();
+  await getForecast();
+}
+
+  Future<Position> getLocationStream() async {
+  final stream = await locator.getPositionStream();
+  final firstPosition = await stream.first;
+
+  setState(() {
+    currentCoordinates = firstPosition;
   });
-  }
 
-  void getForecast() {
-    weather.fetchWeatherData(currentCoordinates?.latitude, currentCoordinates?.longitude).then((weatherData) {
-      setState(() {
-        currentWeather = weatherData;
-      });
+  getNameOfPlaceByCoordinates(currentCoordinates);
+
+  return firstPosition;
+}
+
+  Future<Map<String, dynamic>> getForecast() async {
+    final weatherForecast = await weather.fetchWeatherData(currentCoordinates?.latitude, currentCoordinates?.longitude);
+
+    setState(() {
+      currentWeather = weatherForecast;
     });
+
+    return weatherForecast;
   }
 
   void getNameOfPlaceByCoordinates(coordinates) {

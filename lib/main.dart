@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final weather = Weather();
   Position? currentCoordinates;
   String? currentPlace;
-  Map<String, dynamic>? currentWeather;
+  Map<String, dynamic>? forecast;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void initialize() async {
-  final position = await getLocationStream();
+  await getLocationStream();
   await getForecast();
 }
 
@@ -67,12 +67,16 @@ class _MyHomePageState extends State<MyHomePage> {
     final weatherForecast = await weather.fetchWeatherData(currentCoordinates?.latitude, currentCoordinates?.longitude);
     //print("WeatherForecast in getForecast() =");
     //print(weatherForecast);
-    weather.processWeatherData(weatherForecast);
+    final symbolCodes = weather.processWeatherData(weatherForecast);
     setState(() {
-      currentWeather = weatherForecast;
+      forecast = symbolCodes;
     });
 
     return weatherForecast;
+  }
+
+  void writeForecastToUI(symbolCodes) {
+    
   }
 
   void getNameOfPlaceByCoordinates(coordinates) {
@@ -104,9 +108,20 @@ class _MyHomePageState extends State<MyHomePage> {
               '$currentPlace',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+                SizedBox(height: 20),
+            buildWeatherForecast(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildWeatherForecast() {
+    final symbolCodes = forecast;
+    return Wrap(
+      children: [
+        Text("$symbolCodes")
+      ],
     );
   }
 }

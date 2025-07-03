@@ -123,14 +123,51 @@ class _MyHomePageState extends State<MyHomePage> {
         Text("Loading weather data...")
       ],);
     }
-    
+
     final currentWeatherData = forecast?["now"]["data"]["instant"]["details"];
 
-    return Row(
-      children: [
-        Text("${currentWeatherData['air_temperature']}")
-      ],
-      );
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: Column(
+                children: [
+                  Text("Luftfeuchtigkeit"),
+                  Text("${currentWeatherData['relative_humidity']}%")
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 15),
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: Column(
+                children: [
+                  Text("Temperatur"),
+                  Text("${currentWeatherData['air_temperature']}°C")
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 15),
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: Column(
+                children: [
+                  Text("Luftdruck"),
+                  Text("${currentWeatherData['air_pressure_at_sea_level']}")
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildWeatherForecast() {

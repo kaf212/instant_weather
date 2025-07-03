@@ -116,54 +116,62 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildWeatherForecast() {
-    final next1h = forecast?["next_1_hours"]["symbolCode"];
-    final next6h = forecast?["next_6_hours"]["symbolCode"];
-    final next12h = forecast?["next_12_hours"]["symbolCode"];
+    final next1hForecast = forecast?["next_1_hours"];
+    final next6hForecast = forecast?["next_6_hours"];
+    final next12hForecast = forecast?["next_12_hours"];
 
     return Wrap(
       children: [
         Row(children: [
           Column(children: [
             Text("Nächste Stunde"), 
-            Row(children: [
-              Text("$next1h"),
-              buildWeatherIcon(next1h)
-            ],)
+            buildForecastItem(next1hForecast)
+
           ],)
         ],),
         Row(children: [
           Column(children: [
             Text("Nächste 6 Stunden"), 
-            Row(children: [
-              Text("$next6h"),
-              buildWeatherIcon(next6h)
-            ],)
+            buildForecastItem(next6hForecast)
           ],)
         ],),
         Row(children: [
           Column(children: [
             Text("Nächste 12 Stunden"), 
-            Row(children: [
-              Text("$next12h"),
-              buildWeatherIcon(next12h)
-            ],)
+            buildForecastItem(next12hForecast)
           ],)
         ],)
       ],
     );
   }
 
-  Widget buildWeatherIcon(String? code) {
-  if (code == null || code.isEmpty) return SizedBox.shrink();
-  final path = 'assets/weather_icons/$code.png';
-  return Image.asset(
-    path,
-    width: 80,
-    height: 80,
-    errorBuilder: (context, error, stackTrace) {
-      return SizedBox.shrink();
-    },
-  );
+  Widget buildForecastItem(Map<String, dynamic> ?forecast) {
+    if (forecast == null) {
+      return Row(children: [
+        Text("Loading weather data...")
+      ],);
+    }
+
+    return Row(children: [
+      Text(forecast["temp_min"] != null ? "${forecast["temp_min"]}" : "Keine Daten"),
+      SizedBox(width: 10),
+      Text(forecast["temp_min"] != null ? "${forecast["temp_max"]}" : "Keine Daten"),
+      SizedBox(width: 10),
+      Text(forecast["temp_min"] != null ? "${forecast["precipitation"]}" : "Keine Daten"),
+      buildWeatherIcon(forecast["symbolCode"])
+    ],);
+  }
+
+  Widget buildWeatherIcon(String symbolCode) {
+    final path = 'assets/weather_icons/$symbolCode.png';
+    return Image.asset(
+      path,
+      width: 80,
+      height: 80,
+      errorBuilder: (context, error, stackTrace) {
+        return SizedBox.shrink();
+      },
+    );
 }
 }
 

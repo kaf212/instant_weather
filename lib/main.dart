@@ -107,10 +107,75 @@ class _MyHomePageState extends State<MyHomePage> {
               '$currentPlace',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-                SizedBox(height: 20),
+            SizedBox(height: 20,),
+            buildCurrentWeather(),
+            SizedBox(height: 20),
             buildWeatherForecast(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildCurrentWeather() {
+    if (forecast == null) {
+      return Row(children: [
+        Text("Loading weather data...")
+      ],);
+    }
+
+    final currentWeatherData = forecast?["now"]["data"]["instant"]["details"];
+
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: Column(
+                children: [
+                  Text("Luftfeuchtigkeit"),
+                  Text("${currentWeatherData['relative_humidity']}%",
+                    style: TextStyle(fontSize: 35))
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 15),
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: Column(
+                children: [
+                  Text("Temperatur"),
+                  Text("${currentWeatherData['air_temperature']}°C",
+                    style: TextStyle(fontSize: 35))
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 15),
+          Expanded(
+            child: Container(
+              color: Colors.grey,
+              child: Column(
+                children: [
+                  Text("Luftdruck (hPa)"),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          "${currentWeatherData['air_pressure_at_sea_level'].round()}",
+                            style: TextStyle(fontSize: 35),
+                        ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -196,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
       SizedBox(width: 5),
       Text("|", style: TextStyle(fontSize: 20),),
       SizedBox(width: 5),
-      
+
       Text("${forecastData["air_pressure_at_sea_level"].toString()} hPa",  style: TextStyle(fontSize: 20),),
       Spacer(),
       buildWeatherIcon(symbolCode),

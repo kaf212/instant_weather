@@ -65,7 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<Map<String, dynamic>> getForecast() async {
     final weatherForecast = await weather.fetchWeatherData(currentCoordinates?.latitude, currentCoordinates?.longitude);
-
+    //print("WeatherForecast in getForecast() =");
+    //print(weatherForecast);
+    weather.processWeatherData(weatherForecast);
     setState(() {
       currentWeather = weatherForecast;
     });
@@ -102,7 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
               '$currentPlace',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Text("$currentWeather")
           ],
         ),
       ),

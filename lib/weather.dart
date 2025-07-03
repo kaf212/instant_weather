@@ -19,8 +19,22 @@ class Weather {
       headers: {"User-Agent": "InstantWeather/1.0"}
       );
 
-    print("WEATHER DATA = ");
-    print(jsonDecode(response.body));
+    //print("WEATHER DATA = ");
+    //print(jsonDecode(response.body));
     return jsonDecode(response.body);
+  }
+
+  Map<String, dynamic> processWeatherData(weatherJson) {
+    final next1h = weatherJson['properties']['timeseries'][0]['data']['next_1_hours']['summary']['symbol_code'];
+    final next6h = weatherJson['properties']['timeseries'][0]['data']['next_6_hours']['summary']['symbol_code'];
+    final next12h = weatherJson['properties']['timeseries'][0]['data']['next_12_hours']['summary']['symbol_code'];
+    
+    final symbolCodes = {
+      "next_1_hours": next1h,
+      "next_6_hours": next6h,
+      "next_12_hours": next12h
+    };
+
+    return symbolCodes;
   }
 }

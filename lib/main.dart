@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:instant_weather/geolocator.dart';
+import 'package:instant_weather/weather.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,8 +34,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final locator = Locator();
+  final weather = Weather();
   Position? currentCoordinates;
   String? currentPlace;
+  String? currentWeather;
 
   @override
   void initState() {
@@ -49,11 +52,20 @@ class _MyHomePageState extends State<MyHomePage> {
         print(fetchedPosition);
         currentCoordinates = fetchedPosition;
         getNameOfPlaceByCoordinates(currentCoordinates);
+        getForecast();
       });
     });
   }).catchError((e) {
     print('Error: $e');
   });
+  }
+
+  void getForecast() {
+    weather.fetchWeatherData(currentCoordinates?.latitude, currentCoordinates?.longitude).then((weatherData) {
+      setState(() {
+        currentWeather = weatherData;
+      });
+    });
   }
 
   void getNameOfPlaceByCoordinates(coordinates) {
@@ -85,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$currentPlace',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            Text("$currentWeather")
           ],
         ),
       ),

@@ -136,7 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 children: [
                   Text("Luftfeuchtigkeit"),
-                  Text("${currentWeatherData['relative_humidity']}%")
+                  Text("${currentWeatherData['relative_humidity']}%",
+                    style: TextStyle(fontSize: 35))
                 ],
               ),
             ),
@@ -148,7 +149,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 children: [
                   Text("Temperatur"),
-                  Text("${currentWeatherData['air_temperature']}°C")
+                  Text("${currentWeatherData['air_temperature']}°C",
+                    style: TextStyle(fontSize: 35))
                 ],
               ),
             ),
@@ -159,8 +161,16 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.grey,
               child: Column(
                 children: [
-                  Text("Luftdruck"),
-                  Text("${currentWeatherData['air_pressure_at_sea_level']}")
+                  Text("Luftdruck (hPa)"),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          "${currentWeatherData['air_pressure_at_sea_level'].round()}",
+                            style: TextStyle(fontSize: 35),
+                        ),
+                    ],
+                  )
                 ],
               ),
             ),

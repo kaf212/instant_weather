@@ -5,6 +5,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:instant_weather/geolocator.dart';
 import 'package:instant_weather/storage.dart';
 import 'package:instant_weather/weather.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 119, 209, 251),
+        
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -43,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? currentPlace;
   Map<String, dynamic>? forecast;
   Map<String, dynamic>? currentWeatherChanges;
+  String? date;
 
   @override
   void initState() {
@@ -74,7 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Map<String, dynamic>> getForecast(Position position) async {
   final weatherForecast = await weather.fetchWeatherData(position.latitude, position.longitude);
   final symbolCodes = weather.processWeatherData(weatherForecast);
+
+  await initializeDateFormatting('de_DE', null);
+  final formattedDate = DateFormat("EEEE, d. MMMM y", "de_DE").format(DateTime.now());
+
   setState(() {
+    date = formattedDate;
     forecast = symbolCodes;
     checkForWeatherChanges();
   });
@@ -141,15 +152,28 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.blueAccent,
+        title: Row(
+          children: [
+            Text(
+              "InstantWeather",
+              style: TextStyle(fontSize: 30, color: Colors.white),
+              
+            ),
+          ],
+          ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              '$currentPlace',
-              style: Theme.of(context).textTheme.headlineMedium,
+              '${currentPlace == null ? "Daten werden geladen..." : currentPlace}',
+              style: TextStyle(fontSize: 40),
+            ),
+            Text(
+              "${date == null ? "Daten werden geladen..." : date}",
+              style: TextStyle(fontSize: 20)
             ),
             SizedBox(height: 20,),
             buildCurrentWeather(),
@@ -163,8 +187,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildCurrentWeather() {
     if (forecast == null) {
-      return Row(children: [
-        Text("Loading weather data...")
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        Text("Daten werden geladen...")
       ],);
     }
 
@@ -176,7 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Container(
-              color: Colors.grey,
+              //color: Colors.white,
               child: Column(
                 children: [
                   Text("Luftfeuchtigkeit"),
@@ -194,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(width: 15),
           Expanded(
             child: Container(
-              color: Colors.grey,
+              //color: Colors.white,
               child: Column(
                 children: [
                   Text("Temperatur"),
@@ -212,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(width: 15),
           Expanded(
             child: Container(
-              color: Colors.grey,
+              //color: Colors.white,
               child: Column(
                 children: [
                   Text("Luftdruck (hPa)"),
@@ -251,8 +277,18 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center, // Necessary
             children: [
             Container(
-              color: Colors.grey,
               width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
               child: Column(
                 children: [
                 Text("Nächste Stunde"), 
@@ -265,11 +301,22 @@ class _MyHomePageState extends State<MyHomePage> {
         SizedBox(height: 15),
         Container(
           child: Row(
+            
             mainAxisAlignment: MainAxisAlignment.center, // Necessary
             children: [
             Container(
-              color: Colors.grey,
               width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
               child: Column(children: [
                 Text("Nächste 6 Stunden"), 
                 buildForecastItem(next6hForecast)
@@ -283,8 +330,18 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center, // Necessary
             children: [
             Container(
-              color: Colors.grey,
               width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
               child: Column(children: [
                 Text("Nächste 12 Stunden"), 
                 buildForecastItem(next12hForecast)
@@ -298,7 +355,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildForecastItem(Map<String, dynamic> ?forecast) {
     if (forecast == null) {
       return Row(children: [
-        Text("Loading weather data...")
+        Text("Daten werden geladen...")
       ],);
     }
 

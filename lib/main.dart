@@ -153,6 +153,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
+        title: Row(
+          children: [
+            Text(
+              "InstantWeather",
+              style: TextStyle(fontSize: 30, color: Colors.white),
+              
+            ),
+          ],
+          ),
       ),
       body: Center(
         child: Column(

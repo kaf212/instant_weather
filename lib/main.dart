@@ -169,9 +169,12 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               '${currentPlace == null ? "Daten werden geladen..." : currentPlace}',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: TextStyle(fontSize: 40),
             ),
-            Text("${date == null ? "Daten werden geladen..." : date}"),
+            Text(
+              "${date == null ? "Daten werden geladen..." : date}",
+              style: TextStyle(fontSize: 20)
+            ),
             SizedBox(height: 20,),
             buildCurrentWeather(),
             SizedBox(height: 20),

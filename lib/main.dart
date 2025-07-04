@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final locator = Locator();
   final weather = Weather();
   final connectivityChecker = ConnectivityChecker();
+  final instantWeatherWebsiteUrl = "https://kaf212.github.io/InstantWeather-Webpage/";
 
   StreamSubscription<Position>? positionSubscription;
   Position? currentCoordinates;
@@ -62,6 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void initialize() async {
   await getLocationStream();
 }
+
+  Future<void> visitWebsite() async {
+    // This functionality has been removed because it crashes Android for some reason.
+  }
 
   Future<void> getLocationStream() async {
   final stream = await locator.getPositionStream();
@@ -175,6 +180,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
           ),
+          actions: [
+          IconButton(
+            icon: Icon(Icons.public),
+            onPressed: visitWebsite,
+          ),
+        ],
       ),
       body: Center(
         child: Column(

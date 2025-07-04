@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:instant_weather/connectivity.dart';
 import 'package:instant_weather/geolocator.dart';
 import 'package:instant_weather/storage.dart';
 import 'package:instant_weather/weather.dart';
@@ -43,6 +44,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final locator = Locator();
   final weather = Weather();
+  final connectivityChecker = ConnectivityChecker();
+
   StreamSubscription<Position>? positionSubscription;
   Position? currentCoordinates;
   String? currentPlace;
@@ -78,18 +81,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Map<String, dynamic>> getForecast(Position position) async {
-  final weatherForecast = await weather.fetchWeatherData(position.latitude, position.longitude);
-  final symbolCodes = weather.processWeatherData(weatherForecast);
+    final isConnectedToInternet = await connectivityChecker.hasInternetConnection();
 
-  await initializeDateFormatting('de_DE', null);
-  final formattedDate = DateFormat("EEEE, d. MMMM y", "de_DE").format(DateTime.now());
+    Map<String, dynamic> weatherForecast = {};
+    Map<String, dynamic> symbolCodes = {};
 
-  setState(() {
-    date = formattedDate;
-    forecast = symbolCodes;
-    checkForWeatherChanges();
-  });
-  return weatherForecast;
+    if (isConnectedToInternet) {
+      weatherForecast = await weather.fetchWeatherData(position.latitude, position.longitude);
+      symbolCodes = weather.processWeatherData(weatherForecast);
+    }
+
+    await initializeDateFormatting('de_DE', null);
+    final formattedDate = DateFormat("EEEE, d. MMMM y", "de_DE").format(DateTime.now());
+
+    setState(() {
+      date = formattedDate;
+      if (isConnectedToInternet) {
+        forecast = symbolCodes;
+      }
+      checkForWeatherChanges();
+    });
+
+    return weatherForecast;
 }
 
   void getNameOfPlaceByCoordinates(coordinates) {

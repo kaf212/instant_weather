@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:instant_weather/geolocator.dart';
+import 'package:instant_weather/storage.dart';
 import 'package:instant_weather/weather.dart';
 
 void main() {
@@ -41,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Position? currentCoordinates;
   String? currentPlace;
   Map<String, dynamic>? forecast;
+  Map<String, dynamic>? currentWeatherChanges;
 
   @override
   void initState() {
@@ -74,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final symbolCodes = weather.processWeatherData(weatherForecast);
   setState(() {
     forecast = symbolCodes;
+    checkForWeatherChanges();
   });
   return weatherForecast;
 }
@@ -91,6 +94,45 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       });
     });
+  }
+
+  Future<void> checkForWeatherChanges() async {
+    final persistentStorage = PersistentStorage();
+    
+    final savedTemperature = await persistentStorage.readData("temperature");
+    final savedHumidity = await persistentStorage.readData("humidity");
+    final savedPressure = await persistentStorage.readData("pressure");
+
+    print(savedTemperature == null);
+    print(savedHumidity == null);
+    print(savedPressure == null);
+
+    final currentWeatherData = forecast?["now"]["data"]["instant"]["details"];
+    final changes = {"temperature": 0, "humidity": 0, "pressure": 0};
+
+    final currentTemperature = currentWeatherData["air_temperature"];
+    final currentHumidity = currentWeatherData["relative_humidity"];
+    final currentPressure = currentWeatherData['air_pressure_at_sea_level'];
+
+    if (savedTemperature != null && savedHumidity != null && savedPressure != null) {
+
+      if (savedTemperature != currentTemperature) {
+        changes["temperature"] = currentTemperature - double.parse(savedTemperature); 
+      }
+      if (savedHumidity != currentHumidity) {
+        changes["humidity"] = currentHumidity - double.parse(savedHumidity); 
+      }
+      if (savedPressure != currentPressure) {
+        changes["pressure"] = currentPressure - double.parse(savedPressure); 
+      }
+    }
+
+    persistentStorage.writeData("temperature", currentTemperature.toString());
+    persistentStorage.writeData("humidity", currentHumidity.toString());
+    persistentStorage.writeData("pressure", currentPressure.toString());
+
+    currentWeatherChanges = changes;
+
   }
 
   @override
@@ -137,7 +179,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Text("Luftfeuchtigkeit"),
                   Text("${currentWeatherData['relative_humidity']}%",
-                    style: TextStyle(fontSize: 35))
+                    style: TextStyle(fontSize: 35)),
+                  Text("${currentWeatherChanges?["humidity"]}"),
                 ],
               ),
             ),
@@ -150,7 +193,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Text("Temperatur"),
                   Text("${currentWeatherData['air_temperature']}°C",
-                    style: TextStyle(fontSize: 35))
+                    style: TextStyle(fontSize: 35)),
+                  Text("${currentWeatherChanges?["temperature"]}")
                 ],
               ),
             ),
@@ -169,6 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           "${currentWeatherData['air_pressure_at_sea_level'].round()}",
                             style: TextStyle(fontSize: 35),
                         ),
+                      Text("${currentWeatherChanges?["pressure"]}"),
                     ],
                   )
                 ],

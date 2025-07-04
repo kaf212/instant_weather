@@ -5,6 +5,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:instant_weather/geolocator.dart';
 import 'package:instant_weather/storage.dart';
 import 'package:instant_weather/weather.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -43,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? currentPlace;
   Map<String, dynamic>? forecast;
   Map<String, dynamic>? currentWeatherChanges;
+  String? date;
 
   @override
   void initState() {
@@ -74,7 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Map<String, dynamic>> getForecast(Position position) async {
   final weatherForecast = await weather.fetchWeatherData(position.latitude, position.longitude);
   final symbolCodes = weather.processWeatherData(weatherForecast);
+
+  await initializeDateFormatting('de_DE', null);
+  final formattedDate = DateFormat("EEEE, d. MMMM y", "de_DE").format(DateTime.now());
+
   setState(() {
+    date = formattedDate;
     forecast = symbolCodes;
     checkForWeatherChanges();
   });
@@ -148,9 +157,10 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              '$currentPlace',
+              '${currentPlace == null ? "Daten werden geladen..." : currentPlace}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            Text("${date == null ? "Daten werden geladen..." : date}"),
             SizedBox(height: 20,),
             buildCurrentWeather(),
             SizedBox(height: 20),
@@ -163,8 +173,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildCurrentWeather() {
     if (forecast == null) {
-      return Row(children: [
-        Text("Loading weather data...")
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        Text("Daten werden geladen...")
       ],);
     }
 
@@ -298,7 +310,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildForecastItem(Map<String, dynamic> ?forecast) {
     if (forecast == null) {
       return Row(children: [
-        Text("Loading weather data...")
+        Text("Daten werden geladen...")
       ],);
     }
 

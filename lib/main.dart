@@ -217,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Text("Luftdruck (hPa)"),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                           "${currentWeatherData['air_pressure_at_sea_level'].round()}",

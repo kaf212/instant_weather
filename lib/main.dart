@@ -182,7 +182,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text("Luftfeuchtigkeit"),
                   Text("${currentWeatherData['relative_humidity']}%",
                     style: TextStyle(fontSize: 35)),
-                  Text("${currentWeatherChanges?["humidity"]}"),
+                  Text(
+                    currentWeatherChanges?["humidity"] != null && currentWeatherChanges!["humidity"] != 0
+                        ? "${currentWeatherChanges!["humidity"] > 0 ? '+' : ''}${currentWeatherChanges!["humidity"]}"
+                        : "",
+                  )
                 ],
               ),
             ),
@@ -196,7 +200,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text("Temperatur"),
                   Text("${currentWeatherData['air_temperature']}°C",
                     style: TextStyle(fontSize: 35)),
-                  Text("${currentWeatherChanges?["temperature"]}")
+                  Text(
+                    currentWeatherChanges?["temperature"] != null && currentWeatherChanges!["temperature"] != 0
+                        ? "${currentWeatherChanges!["temperature"] > 0 ? '+' : ''}${currentWeatherChanges!["temperature"]}"
+                        : "",
+                  )
                 ],
               ),
             ),
@@ -215,7 +223,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           "${currentWeatherData['air_pressure_at_sea_level'].round()}",
                             style: TextStyle(fontSize: 35),
                         ),
-                      Text("${currentWeatherChanges?["pressure"]}"),
+                      Text(
+                        currentWeatherChanges?["pressure"] != null && currentWeatherChanges!["pressure"] != 0
+                            ? "${currentWeatherChanges!["pressure"] > 0 ? '+' : ''}${currentWeatherChanges!["pressure"]}"
+                            : "",
+                      )
                     ],
                   )
                 ],

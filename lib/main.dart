@@ -103,12 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final savedHumidity = await persistentStorage.readData("humidity");
     final savedPressure = await persistentStorage.readData("pressure");
 
-    print(savedTemperature == null);
-    print(savedHumidity == null);
-    print(savedPressure == null);
-
     final currentWeatherData = forecast?["now"]["data"]["instant"]["details"];
-    final changes = {"temperature": 0, "humidity": 0, "pressure": 0};
+    final changes = {"temperature": 0.0, "humidity": 0.0, "pressure": 0.0};
 
     final currentTemperature = currentWeatherData["air_temperature"];
     final currentHumidity = currentWeatherData["relative_humidity"];
@@ -117,13 +113,19 @@ class _MyHomePageState extends State<MyHomePage> {
     if (savedTemperature != null && savedHumidity != null && savedPressure != null) {
 
       if (savedTemperature != currentTemperature) {
-        changes["temperature"] = currentTemperature - double.parse(savedTemperature); 
+        changes["temperature"] = double.parse(
+          (currentTemperature - double.parse(savedTemperature)).toStringAsFixed(1)
+          );
       }
       if (savedHumidity != currentHumidity) {
-        changes["humidity"] = currentHumidity - double.parse(savedHumidity); 
+        changes["humidity"] = double.parse(
+          (currentHumidity - double.parse(savedHumidity)).toStringAsFixed(1)
+          );
       }
       if (savedPressure != currentPressure) {
-        changes["pressure"] = currentPressure - double.parse(savedPressure); 
+        changes["pressure"] = double.parse(
+          (currentPressure - double.parse(savedPressure)).toStringAsFixed(1)
+          ); 
       }
     }
 

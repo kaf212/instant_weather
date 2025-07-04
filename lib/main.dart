@@ -98,8 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
       date = formattedDate;
       if (isConnectedToInternet) {
         forecast = symbolCodes;
+        checkForWeatherChanges();
       }
-      checkForWeatherChanges();
     });
 
     return weatherForecast;

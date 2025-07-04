@@ -22,7 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 119, 209, 251),
+        
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -150,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.blueAccent,
       ),
       body: Center(
         child: Column(
@@ -188,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Container(
-              color: Colors.grey,
+              //color: Colors.white,
               child: Column(
                 children: [
                   Text("Luftfeuchtigkeit"),
@@ -206,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(width: 15),
           Expanded(
             child: Container(
-              color: Colors.grey,
+              //color: Colors.white,
               child: Column(
                 children: [
                   Text("Temperatur"),
@@ -224,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(width: 15),
           Expanded(
             child: Container(
-              color: Colors.grey,
+              //color: Colors.white,
               child: Column(
                 children: [
                   Text("Luftdruck (hPa)"),
@@ -263,8 +265,17 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center, // Necessary
             children: [
             Container(
-              color: Colors.grey,
               width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
               child: Column(
                 children: [
                 Text("Nächste Stunde"), 
@@ -277,11 +288,21 @@ class _MyHomePageState extends State<MyHomePage> {
         SizedBox(height: 15),
         Container(
           child: Row(
+            
             mainAxisAlignment: MainAxisAlignment.center, // Necessary
             children: [
             Container(
-              color: Colors.grey,
               width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
               child: Column(children: [
                 Text("Nächste 6 Stunden"), 
                 buildForecastItem(next6hForecast)
@@ -295,8 +316,17 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center, // Necessary
             children: [
             Container(
-              color: Colors.grey,
               width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                ),
+              ],
+            ),
               child: Column(children: [
                 Text("Nächste 12 Stunden"), 
                 buildForecastItem(next12hForecast)
